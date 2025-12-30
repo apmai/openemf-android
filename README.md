@@ -30,9 +30,41 @@ An open-source EMF (electromagnetic field) monitoring app for Android. Measure W
 
 - **Mitigation Tips**: Practical suggestions to reduce EMF exposure
 
-## Download
+## Download & Install
 
 Get the latest APK from [Releases](https://github.com/apmai/openemf-android/releases/latest).
+
+### Installation Steps
+
+1. **Download** the `app-release.apk` file on your Android device
+2. **Enable installation** from unknown sources:
+   - Go to Settings → Security → Install unknown apps
+   - Enable for your browser or file manager
+3. **Open** the downloaded APK file
+4. **Tap Install** when prompted
+5. **Grant permissions** when the app launches:
+   - Location (required for WiFi/cellular scanning)
+   - Bluetooth (for device detection)
+
+### Testing Checklist
+
+After installing, verify these features work:
+- [ ] App launches without crash
+- [ ] E-Score gauge displays and animates
+- [ ] WiFi networks are detected (Sources tab)
+- [ ] Bluetooth devices are found
+- [ ] Map view loads (requires location enabled)
+- [ ] Statistics show measurement history
+- [ ] Dark/light theme toggle works
+
+### Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| "App not installed" | Enable "Install unknown apps" in Settings |
+| No WiFi networks found | Grant Location permission, enable GPS |
+| No Bluetooth devices | Grant Bluetooth permission, enable Bluetooth |
+| Map not loading | Enable Location services on device |
 
 ## Building from Source
 
