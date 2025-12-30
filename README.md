@@ -8,7 +8,7 @@
   <strong>Measure, Mitigate and Educate</strong>
 </p>
 
-An open-source EMF (electromagnetic field) monitoring app for Android. Measure WiFi, Bluetooth, and cellular exposure with a simple E-Score rating system.
+An open-source EMF (electromagnetic field) monitoring app for Android. Measure WiFi, Bluetooth, Cellular, and Magnetic field exposure with a simple E-Score rating system.
 
 ## Features
 
