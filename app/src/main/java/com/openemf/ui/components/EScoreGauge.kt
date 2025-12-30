@@ -3,12 +3,16 @@ package com.openemf.ui.components
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -16,9 +20,11 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.openemf.ui.theme.getEScoreColor
+import com.openemf.ui.theme.*
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -42,7 +48,9 @@ fun EScoreGauge(
     size: Dp = 200.dp,
     strokeWidth: Dp = 16.dp,
     animated: Boolean = true,
-    showThresholds: Boolean = true
+    showThresholds: Boolean = true,
+    showLegend: Boolean = true,
+    onLabelClick: (() -> Unit)? = null
 ) {
     val animatedScore by animateFloatAsState(
         targetValue = score.toFloat(),
@@ -53,80 +61,160 @@ fun EScoreGauge(
     val scoreColor = getEScoreColor(score)
     val onSurfaceVariant = MaterialTheme.colorScheme.onSurfaceVariant
 
-    Box(
-        modifier = modifier.size(size),
-        contentAlignment = Alignment.Center
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val strokeWidthPx = strokeWidth.toPx()
-            val arcSize = Size(
-                width = this.size.width - strokeWidthPx,
-                height = this.size.height - strokeWidthPx
-            )
-            val topLeft = Offset(strokeWidthPx / 2, strokeWidthPx / 2)
-            val center = Offset(this.size.width / 2, this.size.height / 2)
-            val radius = (this.size.width - strokeWidthPx) / 2
+        Box(
+            modifier = Modifier.size(size),
+            contentAlignment = Alignment.Center
+        ) {
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                val strokeWidthPx = strokeWidth.toPx()
+                val arcSize = Size(
+                    width = this.size.width - strokeWidthPx,
+                    height = this.size.height - strokeWidthPx
+                )
+                val topLeft = Offset(strokeWidthPx / 2, strokeWidthPx / 2)
+                val center = Offset(this.size.width / 2, this.size.height / 2)
+                val radius = (this.size.width - strokeWidthPx) / 2
 
-            // Draw background - full circumference tinted with score color
-            // This makes the entire ring color-coded based on the current reading
-            drawArc(
-                color = scoreColor.copy(alpha = 0.15f),
-                startAngle = 135f,
-                sweepAngle = 270f,
-                useCenter = false,
-                topLeft = topLeft,
-                size = arcSize,
-                style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
-            )
+                // Draw background - full circumference tinted with score color
+                // This makes the entire ring color-coded based on the current reading
+                drawArc(
+                    color = scoreColor.copy(alpha = 0.15f),
+                    startAngle = 135f,
+                    sweepAngle = 270f,
+                    useCenter = false,
+                    topLeft = topLeft,
+                    size = arcSize,
+                    style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
+                )
 
-            // Draw zone indicators (subtle markers at thresholds)
-            if (showThresholds) {
-                // Draw threshold tick marks for all 5 boundaries
-                drawThresholdTick(center, radius, EXCELLENT_THRESHOLD, strokeWidthPx, onSurfaceVariant)
-                drawThresholdTick(center, radius, GOOD_THRESHOLD, strokeWidthPx, onSurfaceVariant)
-                drawThresholdTick(center, radius, MODERATE_THRESHOLD, strokeWidthPx, onSurfaceVariant)
-                drawThresholdTick(center, radius, ELEVATED_THRESHOLD, strokeWidthPx, onSurfaceVariant)
-                drawThresholdTick(center, radius, HIGH_THRESHOLD, strokeWidthPx, onSurfaceVariant)
+                // Draw zone indicators (subtle markers at thresholds)
+                if (showThresholds) {
+                    // Draw threshold tick marks for all 5 boundaries
+                    drawThresholdTick(center, radius, EXCELLENT_THRESHOLD, strokeWidthPx, onSurfaceVariant)
+                    drawThresholdTick(center, radius, GOOD_THRESHOLD, strokeWidthPx, onSurfaceVariant)
+                    drawThresholdTick(center, radius, MODERATE_THRESHOLD, strokeWidthPx, onSurfaceVariant)
+                    drawThresholdTick(center, radius, ELEVATED_THRESHOLD, strokeWidthPx, onSurfaceVariant)
+                    drawThresholdTick(center, radius, HIGH_THRESHOLD, strokeWidthPx, onSurfaceVariant)
+                }
+
+                // Score arc (foreground) - shows current score level with full color
+                val sweepAngle = (animatedScore / 100f) * 270f
+                drawArc(
+                    color = scoreColor,
+                    startAngle = 135f,
+                    sweepAngle = sweepAngle,
+                    useCenter = false,
+                    topLeft = topLeft,
+                    size = arcSize,
+                    style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
+                )
+
+                // Inner glow circle for emphasis
+                val innerRadius = radius - strokeWidthPx - 8f
+                if (innerRadius > 0) {
+                    drawCircle(
+                        color = scoreColor.copy(alpha = 0.08f),
+                        radius = innerRadius,
+                        center = center
+                    )
+                }
             }
 
-            // Score arc (foreground) - shows current score level with full color
-            val sweepAngle = (animatedScore / 100f) * 270f
-            drawArc(
-                color = scoreColor,
-                startAngle = 135f,
-                sweepAngle = sweepAngle,
-                useCenter = false,
-                topLeft = topLeft,
-                size = arcSize,
-                style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
-            )
-
-            // Inner glow circle for emphasis
-            val innerRadius = radius - strokeWidthPx - 8f
-            if (innerRadius > 0) {
-                drawCircle(
-                    color = scoreColor.copy(alpha = 0.08f),
-                    radius = innerRadius,
-                    center = center
+            // Score text
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = score.toString(),
+                    style = MaterialTheme.typography.displayLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = scoreColor
+                )
+                // Clickable label that navigates to Solutions
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        textDecoration = if (onLabelClick != null) TextDecoration.Underline else TextDecoration.None
+                    ),
+                    color = if (onLabelClick != null) scoreColor else MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = if (onLabelClick != null) {
+                        Modifier.clickable { onLabelClick() }
+                    } else {
+                        Modifier
+                    }
                 )
             }
         }
 
-        // Score text
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+        // Color scale legend
+        if (showLegend) {
+            Spacer(modifier = Modifier.height(12.dp))
+            EScoreColorLegend(currentScore = score)
+        }
+    }
+}
+
+/**
+ * E-Score color scale legend showing all 6 levels with current level highlighted.
+ */
+@Composable
+private fun EScoreColorLegend(
+    currentScore: Int,
+    modifier: Modifier = Modifier
+) {
+    val levels = listOf(
+        Triple("Excellent", ScoreExcellent, 0..10),
+        Triple("Good", ScoreGood, 11..25),
+        Triple("Moderate", ScoreModerate, 26..50),
+        Triple("Elevated", ScoreElevated, 51..75),
+        Triple("High", ScoreHigh, 76..90),
+        Triple("V.High", ScoreVeryHigh, 91..100)
+    )
+
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Color bar
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .height(8.dp)
+                .clip(RoundedCornerShape(4.dp))
         ) {
-            Text(
-                text = score.toString(),
-                style = MaterialTheme.typography.displayLarge,
-                fontWeight = FontWeight.Bold,
-                color = scoreColor
-            )
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            levels.forEach { (_, color, range) ->
+                val weight = (range.last - range.first + 1) / 100f
+                val isCurrentLevel = currentScore in range
+                Box(
+                    modifier = Modifier
+                        .weight(weight)
+                        .fillMaxHeight()
+                        .background(if (isCurrentLevel) color else color.copy(alpha = 0.4f))
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        // Labels
+        Row(
+            modifier = Modifier.fillMaxWidth(0.9f),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            levels.forEach { (name, color, range) ->
+                val isCurrentLevel = currentScore in range
+                Text(
+                    text = name,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = if (isCurrentLevel) color else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                    fontWeight = if (isCurrentLevel) FontWeight.Bold else FontWeight.Normal,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }

@@ -42,6 +42,7 @@ fun SettingsScreen(
     onResetClearHistoryState: () -> Unit = {},
     onExportCSV: () -> Unit = {},
     onResetExportState: () -> Unit = {},
+    onOpenWebsite: () -> Unit,
     onOpenPrivacyPolicy: () -> Unit,
     onOpenGitHub: () -> Unit,
     modifier: Modifier = Modifier
@@ -153,6 +154,14 @@ fun SettingsScreen(
                     title = "Version",
                     subtitle = "1.0.0",
                     onClick = {}
+                )
+
+                SettingsItem(
+                    icon = Icons.Default.Language,
+                    title = "Companion Website",
+                    subtitle = "openemf.invisiblerainbows.com",
+                    trailingIcon = Icons.AutoMirrored.Filled.OpenInNew,
+                    onClick = onOpenWebsite
                 )
 
                 SettingsItem(

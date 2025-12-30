@@ -1,5 +1,7 @@
 package com.openemf.ui.navigation
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -8,11 +10,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import com.openemf.data.database.MeasurementEntity
 import com.openemf.data.repository.PlaceWithStats
 import com.openemf.sensors.api.*
 import com.openemf.ui.screens.DashboardScreen
-import com.openemf.ui.screens.MapScreen
 import com.openemf.ui.screens.StatisticsScreen
 import com.openemf.ui.screens.SolutionsScreen
 
@@ -29,10 +31,10 @@ enum class NavDestination(
         selectedIcon = Icons.Filled.Sensors,
         unselectedIcon = Icons.Outlined.Sensors
     ),
-    MAP(
-        label = "Map",
-        selectedIcon = Icons.Filled.Map,
-        unselectedIcon = Icons.Outlined.Map
+    WEB(
+        label = "Web",
+        selectedIcon = Icons.Filled.Language,
+        unselectedIcon = Icons.Outlined.Language
     ),
     STATISTICS(
         label = "Statistics",
@@ -48,7 +50,7 @@ enum class NavDestination(
 
 /**
  * Main app scaffold with bottom navigation.
- * Provides navigation between Live, Map, Statistics, and Solutions screens.
+ * Provides navigation between Live, Web, Statistics, and Solutions screens.
  */
 @Composable
 fun MainAppScaffold(
@@ -56,15 +58,12 @@ fun MainAppScaffold(
     scanBudget: ScanBudget,
     lastMeasurement: Measurement?,
     measurementHistory: List<Measurement>,
-    storedMeasurements: List<MeasurementEntity>,
-    places: List<PlaceWithStats>,
     onScanClick: () -> Unit,
     onSettingsClick: () -> Unit,
-    onAddPlace: (Double, Double) -> Unit,
-    onPlaceClick: (PlaceWithStats) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var currentDestination by remember { mutableStateOf(NavDestination.LIVE) }
+    val context = LocalContext.current
 
     Scaffold(
         bottomBar = {
@@ -99,16 +98,26 @@ fun MainAppScaffold(
                     lastMeasurement = lastMeasurement,
                     onScanClick = onScanClick,
                     onHistoryClick = { currentDestination = NavDestination.STATISTICS },
+                    onSolutionsClick = { currentDestination = NavDestination.SOLUTIONS },
                     onSettingsClick = onSettingsClick,
                     modifier = Modifier.padding(padding)
                 )
             }
-            NavDestination.MAP -> {
-                MapScreen(
-                    measurements = storedMeasurements,
-                    places = places,
-                    onAddPlace = onAddPlace,
-                    onPlaceClick = onPlaceClick,
+            NavDestination.WEB -> {
+                // Open website in browser and return to Live
+                LaunchedEffect(Unit) {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://openemf.invisiblerainbows.com"))
+                    context.startActivity(intent)
+                    currentDestination = NavDestination.LIVE
+                }
+                // Show Live screen while browser opens
+                DashboardScreen(
+                    sensorState = sensorState,
+                    scanBudget = scanBudget,
+                    lastMeasurement = lastMeasurement,
+                    onScanClick = onScanClick,
+                    onHistoryClick = { currentDestination = NavDestination.STATISTICS },
+                    onSolutionsClick = { currentDestination = NavDestination.SOLUTIONS },
                     onSettingsClick = onSettingsClick,
                     modifier = Modifier.padding(padding)
                 )

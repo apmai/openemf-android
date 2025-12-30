@@ -19,6 +19,9 @@ import com.openemf.sensors.api.*
 import com.openemf.ui.theme.BluetoothColor
 import com.openemf.ui.theme.CellularColor
 import com.openemf.ui.theme.WiFiColor
+import android.content.Intent
+import android.provider.Settings
+import androidx.compose.ui.platform.LocalContext
 
 /**
  * Solutions screen providing actionable advice to reduce EMF exposure.
@@ -582,6 +585,8 @@ private fun DistanceRow(distance: String, power: String, reduction: String) {
 
 @Composable
 private fun QuickActionsCard() {
+    val context = LocalContext.current
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -602,23 +607,32 @@ private fun QuickActionsCard() {
                 QuickActionButton(
                     icon = Icons.Default.AirplanemodeActive,
                     label = "Airplane\nMode",
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    onClick = {
+                        context.startActivity(Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS))
+                    }
                 )
                 QuickActionButton(
                     icon = Icons.Default.WifiOff,
-                    label = "Disable\nWiFi",
-                    modifier = Modifier.weight(1f)
+                    label = "WiFi\nSettings",
+                    modifier = Modifier.weight(1f),
+                    onClick = {
+                        context.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
+                    }
                 )
                 QuickActionButton(
                     icon = Icons.Default.BluetoothDisabled,
-                    label = "Disable\nBluetooth",
-                    modifier = Modifier.weight(1f)
+                    label = "Bluetooth\nSettings",
+                    modifier = Modifier.weight(1f),
+                    onClick = {
+                        context.startActivity(Intent(Settings.ACTION_BLUETOOTH_SETTINGS))
+                    }
                 )
             }
 
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Note: These actions will open system settings",
+                text = "Tap to open system settings",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -630,11 +644,12 @@ private fun QuickActionsCard() {
 private fun QuickActionButton(
     icon: ImageVector,
     label: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     OutlinedCard(
         modifier = modifier,
-        onClick = { /* TODO: Open system settings */ }
+        onClick = onClick
     ) {
         Column(
             modifier = Modifier

@@ -26,7 +26,7 @@ sealed class Screen(val route: String) {
 
 /**
  * Main navigation graph.
- * Uses MainAppScaffold with bottom navigation for Live/Map/Statistics/Solutions.
+ * Uses MainAppScaffold with bottom navigation for Live/Web/Statistics/Solutions.
  */
 @Composable
 fun OpenEMFNavGraph(
@@ -42,8 +42,6 @@ fun OpenEMFNavGraph(
     val scanBudget by dashboardViewModel.scanBudget.collectAsState()
     val lastMeasurement by dashboardViewModel.lastMeasurement.collectAsState()
     val measurementHistory by dashboardViewModel.measurementHistory.collectAsState()
-    val storedMeasurements by dashboardViewModel.storedMeasurements.collectAsState()
-    val places by dashboardViewModel.places.collectAsState()
 
     val settingsPermissions by settingsViewModel.permissionStatus.collectAsState()
     val monitoringEnabled by settingsViewModel.monitoringEnabled.collectAsState()
@@ -56,19 +54,15 @@ fun OpenEMFNavGraph(
         navController = navController,
         startDestination = Screen.Main.route
     ) {
-        // Main screen with bottom navigation (Live, Map, Statistics, Solutions)
+        // Main screen with bottom navigation (Live, Web, Statistics, Solutions)
         composable(Screen.Main.route) {
             MainAppScaffold(
                 sensorState = sensorState,
                 scanBudget = scanBudget,
                 lastMeasurement = lastMeasurement,
                 measurementHistory = measurementHistory,
-                storedMeasurements = storedMeasurements,
-                places = places,
                 onScanClick = { dashboardViewModel.measureNow() },
-                onSettingsClick = { navController.navigate(Screen.Settings.route) },
-                onAddPlace = { lat, lon -> dashboardViewModel.addPlace(lat, lon) },
-                onPlaceClick = { /* Navigate to place detail or filter measurements */ }
+                onSettingsClick = { navController.navigate(Screen.Settings.route) }
             )
         }
 
@@ -109,8 +103,9 @@ fun OpenEMFNavGraph(
                 onResetClearHistoryState = { settingsViewModel.resetClearHistoryState() },
                 onExportCSV = { settingsViewModel.exportToCSV(context) },
                 onResetExportState = { settingsViewModel.resetExportState() },
-                onOpenPrivacyPolicy = { onOpenUrl("https://invisiblerainbows.com/privacy") },
-                onOpenGitHub = { onOpenUrl("https://github.com/openemf/openemf") }
+                onOpenWebsite = { onOpenUrl("https://openemf.invisiblerainbows.com") },
+                onOpenPrivacyPolicy = { onOpenUrl("https://openemf.invisiblerainbows.com/privacy") },
+                onOpenGitHub = { onOpenUrl("https://github.com/apmai/openemf-android") }
             )
         }
     }

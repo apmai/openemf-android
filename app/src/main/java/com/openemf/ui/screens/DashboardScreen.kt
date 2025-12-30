@@ -51,6 +51,7 @@ fun DashboardScreen(
     lastMeasurement: Measurement?,
     onScanClick: () -> Unit,
     onHistoryClick: () -> Unit,
+    onSolutionsClick: () -> Unit,
     onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -153,7 +154,8 @@ fun DashboardScreen(
                 EScoreGauge(
                     score = score,
                     label = label,
-                    modifier = Modifier.padding(vertical = 8.dp)
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    onLabelClick = onSolutionsClick
                 )
             }
 
@@ -626,18 +628,18 @@ private fun ContributionBar(
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         Icon(
             imageVector = icon,
             contentDescription = label,
             tint = color,
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(18.dp)
         )
         Text(
             text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.width(70.dp)
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.width(58.dp)
         )
         // Percentage bar
         Box(
@@ -657,8 +659,8 @@ private fun ContributionBar(
         // Percentage and count
         Text(
             text = if (percentage == 0 && count > 0) "<1%" else "$percentage%",
-            style = MaterialTheme.typography.labelMedium,
-            modifier = Modifier.width(36.dp)
+            style = MaterialTheme.typography.labelSmall,
+            modifier = Modifier.width(32.dp)
         )
         Text(
             text = "($count)",
