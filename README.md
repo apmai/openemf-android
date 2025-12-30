@@ -165,12 +165,13 @@ We're actively working on new features for upcoming releases:
 
 | Feature | Status | Target |
 |---------|--------|--------|
+| Export data (CSV) | Done | v1.0.0 |
 | Cloud sync & backup | In Progress | v1.1.0 |
 | Global EMF heatmap | Planned | v1.1.0 |
+| Export data (PDF) | Planned | v1.1.0 |
 | Real-time exposure alerts | Planned | v1.2.0 |
 | Widgets for home screen | Planned | v1.2.0 |
 | Wear OS companion app | Exploring | TBD |
-| Export data (CSV/PDF) | Planned | v1.1.0 |
 | Multiple location profiles | Planned | v1.2.0 |
 
 **Want to see the future vision?** Check out our [interactive demo mockup](https://www.invisiblerainbows.com/openemf) to preview upcoming features and UI concepts.
