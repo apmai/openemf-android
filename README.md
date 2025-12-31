@@ -20,7 +20,7 @@ An open-source EMF (electromagnetic field) monitoring app for Android. Measure W
 
 ## Features
 
-- **E-Score Rating**: Simple 0-100 score based on ICNIRP reference levels
+- **E-Score Rating**: Relative 0-100 exposure index for comparing environments
   - 0-10: Excellent (Very low exposure)
   - 11-25: Good (Low exposure)
   - 26-50: Moderate (Typical urban levels)
@@ -28,15 +28,17 @@ An open-source EMF (electromagnetic field) monitoring app for Android. Measure W
   - 76-90: High (Consider reducing sources)
   - 90+: Very High
 
+> **Note**: The E-Score is NOT a percentage of ICNIRP safety limits. Typical indoor exposures are millions of times below ICNIRP limits. The E-Score compares your environment to typical real-world exposure levels, helping you identify stronger sources and compare locations.
+
 - **Source Detection**: Scans for WiFi networks, Bluetooth devices, and cellular towers
 
 - **Magnetic Field Reading**: Uses device magnetometer to measure ELF-EMF
 
 - **Statistics & History**: Track your exposure over time with charts and trends
 
-- **Map View**: See measurement locations on an interactive map
+- **Solutions & Tips**: Personalized recommendations to reduce EMF exposure
 
-- **Mitigation Tips**: Practical suggestions to reduce EMF exposure
+- **Web Integration**: Quick access to OpenEMF website for education and resources
 
 ## Download & Install
 
@@ -61,7 +63,7 @@ After installing, verify these features work:
 - [ ] E-Score gauge displays and animates
 - [ ] WiFi networks are detected (Sources tab)
 - [ ] Bluetooth devices are found
-- [ ] Map view loads (requires location enabled)
+- [ ] Web tab opens website in browser
 - [ ] Statistics show measurement history
 - [ ] Dark/light theme toggle works
 
@@ -72,7 +74,6 @@ After installing, verify these features work:
 | "App not installed" | Enable "Install unknown apps" in Settings |
 | No WiFi networks found | Grant Location permission, enable GPS |
 | No Bluetooth devices | Grant Bluetooth permission, enable Bluetooth |
-| Map not loading | Enable Location services on device |
 
 ## FAQ
 
